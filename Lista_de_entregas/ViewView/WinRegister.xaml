@@ -1,0 +1,42 @@
+﻿<Window x:Class="Lista_de_entregas.ViewView.WinRegister"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lista_de_entregas.ViewView"
+        mc:Ignorable="d"
+        Title="Registrar Carga" Height="457" Width="522">
+    <Grid Margin="0,0,0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="27*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Label Content="Id  Carga" HorizontalAlignment="Left" Margin="30,37,0,0" VerticalAlignment="Top" Width="181" Height="30" />
+        <TextBox  HorizontalAlignment="Left" Margin="30,72,0,0" Text="{Binding Path=IdCarga}" TextWrapping="Wrap" VerticalAlignment="Top" Width="181" Height="22" />
+        <Label Content="Endereço" HorizontalAlignment="Left" Margin="30,107,0,0" VerticalAlignment="Top" Width="181" Height="30" />
+        <TextBox HorizontalAlignment="Left" Margin="30,142,0,0" Text="{Binding Path=Endereco}" TextWrapping="Wrap" VerticalAlignment="Top" Width="181" Height="22"/>
+        <Label Content="Cidade" HorizontalAlignment="Left" Margin="30,177,0,0" VerticalAlignment="Top" Width="181" Height="30"/>
+        <TextBox HorizontalAlignment="Left" Margin="30,212,0,0" Text="{Binding Path=Cidade}" TextWrapping="Wrap" VerticalAlignment="Top" Width="181" Height="22"/>
+        <Label Content="Estado" HorizontalAlignment="Left" Margin="30,244,0,0" VerticalAlignment="Top" Width="181" Height="30"/>
+        <ComboBox Name="EstadoComboBox"  Text="{Binding Path=Estados}" HorizontalAlignment="Left" Margin="30,279,0,0" VerticalAlignment="Top" Width="181" Height="26"/>
+        <Label Content="Frete" HorizontalAlignment="Left" Margin="291,35,0,0" VerticalAlignment="Top" Width="180" Height="30"/>
+        <TextBox HorizontalAlignment="Left" Margin="291,70,0,0" Text="{Binding Path=Frete}" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Height="22"/>
+        <Label Content="Peso (t)" HorizontalAlignment="Left" Margin="291,102,0,0" VerticalAlignment="Top" Width="180" Height="30"/>
+        <TextBox HorizontalAlignment="Left" Margin="291,137,0,0" Text="{Binding Path=Peso}" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Height="22"/>
+        <Label Content="Data Entrega" HorizontalAlignment="Left" Margin="291,177,0,0" VerticalAlignment="Top" Width="180" Height="30"/>
+        <DatePicker SelectedDate="{Binding Path=DataEntrega}" HorizontalAlignment="Left" Margin="291,223,0,0" VerticalAlignment="Top" Width="180" Height="28"/>
+
+        <Button Name="OKButton"
+                        Grid.Column="0"
+                        Content="OK"
+                        Margin="70,355,0,0"
+                        IsDefault="True"
+                        Click="OKButton_Click" Height="46" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" RenderTransformOrigin="-0.831,2.155"/>
+        <Button
+                        Content="Cancelar"
+                        Margin="0,355,77,0"
+                        IsCancel="True" Height="46" VerticalAlignment="Top" HorizontalAlignment="Right" Width="105"/>
+
+    </Grid>
+</Window>
