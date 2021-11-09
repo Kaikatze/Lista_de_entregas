@@ -9,8 +9,6 @@ namespace Lista_de_entregas.DataBaseAcess
 {
     public interface IEntregasContexto
     {
-        IEntregas Entregas { get; set; }
-        List<IEntregas> ListaEntregas { get; set; }
         void InsertData(IEntregas entregas);
         void DeleteData(IEntregas entregas);
         void UpdateData(IEntregas entregas);

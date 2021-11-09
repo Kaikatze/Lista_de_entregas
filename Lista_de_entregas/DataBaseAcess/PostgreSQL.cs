@@ -15,29 +15,23 @@ namespace Lista_de_entregas.DataBaseAcess
 {
     public class PostgreSQL : IEntregasContexto
     {
-        static string serverName = "localhost";
-        static string porta = "5432";
-        static string username = "postgres";
-        static string password = "$321";
-        static string database = "entregacargas";
-        private string _conectaString = String.Format("Server={0};Port={1};User Id={2};Password={3};Database={4};",
+        private static string serverName = "localhost";
+        private static string porta = "5432";
+        private static string username = "postgres";
+        private static string password = "$321";
+        private static string database = "entregacargas";
+        private string ConectaString = String.Format("Server={0};Port={1};User Id={2};Password={3};Database={4};",
                                                 serverName, porta, username, password, database);
-        NpgsqlConnection pgsqlConnection;
-        public string ConectaString { get => _conectaString;  }
-        public IEntregas Entrega { get; set; }
-        public List<IEntregas> ListaEntregas { get; set; }
+        private NpgsqlConnection pgsqlConnection;
+        private IEntregas Entrega; //<-
+        private List<IEntregas> ListaEntregas;
+        private DataSet DataSet;
 
-        public PostgreSQL() { }
-
-        public PostgreSQL(IEntregas entrega)
+        private NpgsqlCommand pgsqlcommand;
+        public PostgreSQL() 
         {
-            Entrega = entrega;
+            pgsqlcommand = new NpgsqlCommand(cmdInserir, pgsqlConnection);
         }
-
-        public DataSet DataSet { get; set; }
-
-        public ObservableCollection<Entregas> Entregas { get; set; }
-        IEntregas IEntregasContexto.Entregas { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private void CriaConexao()
         {
@@ -61,7 +55,7 @@ namespace Lista_de_entregas.DataBaseAcess
                           entregas.Cidade, entregas.Estados.ToString(),
                           entregas.Frete.ToString(), entregas.Peso.ToString(),
                           entregas.DataEntrega.ToString());
-                NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdInserir, pgsqlConnection);
+                
                 pgsqlcommand.ExecuteNonQuery();
             }
             catch (Exception error)

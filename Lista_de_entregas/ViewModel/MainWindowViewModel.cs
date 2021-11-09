@@ -30,7 +30,7 @@ namespace Lista_de_entregas.ViewModel
             set { _entregaSelecionada = value; OnPropertyChanged("Entrega Selecionada"); }
         }
 
-        public ICommand AdicionaComando { get; private set; }
+        public ICommand AdicionaComando { get;  set; }
         public ICommand DeletarComando { get; private set; }
         public ICommand AtualizaComando { get; private set; }
 
@@ -93,13 +93,13 @@ namespace Lista_de_entregas.ViewModel
 
                 if (updateDialog.DialogResult.HasValue && updateDialog.DialogResult.Value)
                 {
-                    EntregaSelecionada.IdCarga = clonaEntrega.IdCarga;
-                    EntregaSelecionada.Endereco = clonaEntrega.Endereco;
-                    EntregaSelecionada.Cidade = clonaEntrega.Cidade;
-                    EntregaSelecionada.Estados = clonaEntrega.Estados;
-                    EntregaSelecionada.Frete = clonaEntrega.Frete;
-                    EntregaSelecionada.Peso = clonaEntrega.Peso;
-                    EntregaSelecionada.DataEntrega = clonaEntrega.DataEntrega;
+                    ////EntregaSelecionada.IdCarga = clonaEntrega.IdCarga;
+                    ////EntregaSelecionada.Endereco = clonaEntrega.Endereco;
+                    //EntregaSelecionada.Cidade = clonaEntrega.Cidade;
+                    //EntregaSelecionada.Estados = clonaEntrega.Estados;
+                    //EntregaSelecionada.Frete = clonaEntrega.Frete;
+                    //EntregaSelecionada.Peso = clonaEntrega.Peso;
+                    ////EntregaSelecionada.DataEntrega = clonaEntrega.DataEntrega;
                 }
             }
         }
