@@ -54,25 +54,15 @@ namespace Lista_de_entregas.DataBaseAcess
             try
             {
                 CriaConexao();
-                using (pgsqlConnection)
-                {
-                    pgsqlConnection.Open();
-
-                    string cmdInserir = String.Format("Insert Into Entregas(idcarga,endereco,cidade,estado,frete,toneladas,datacarga)" +
+                pgsqlConnection.Open();
+                string cmdInserir = String.Format("Insert Into Entregas(idcarga,endereco,cidade,estado,frete,toneladas,datacarga)" +
                         " values({0},'{1}','{2}','{3}',{4},{5},'{6}')",
                           entregas.IdCarga.ToString(), entregas.Endereco,//Endereco & Cidade "String"
                           entregas.Cidade, entregas.Estados.ToString(),
                           entregas.Frete.ToString(), entregas.Peso.ToString(),
                           entregas.DataEntrega.ToString());
-
-                    using (NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdInserir, pgsqlConnection))
-                    {
-                        pgsqlcommand.ExecuteNonQuery();
-                    }
-
-                    
-
-                }
+                NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdInserir, pgsqlConnection);
+                pgsqlcommand.ExecuteNonQuery();
             }
             catch (Exception error)
             {
@@ -89,24 +79,17 @@ namespace Lista_de_entregas.DataBaseAcess
         {
             try
             {
-                //CriaConexao();
-                using (pgsqlConnection)
-                {
-                    pgsqlConnection.Open();
-                    string cmdDeletar = String.Format("delete from entregas where idcarga = '{0}'", entregas.IdCarga.ToString());
+                CriaConexao();
+                pgsqlConnection.Open();
+                string cmdDeletar = String.Format("delete from entregas where idcarga = '{0}'", entregas.IdCarga.ToString());
+                NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdDeletar, pgsqlConnection);
+                pgsqlcommand.ExecuteNonQuery();
 
-                    using (NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdDeletar, pgsqlConnection))
-                    {
-                        pgsqlcommand.ExecuteNonQuery();
-                    }
-
-                    
-                }
             }
             catch (Exception error)
             {
 
-                MessageBox.Show(error.ToString());
+                MessageBox.Show(error.Message);
             }
             finally
             {
@@ -117,11 +100,11 @@ namespace Lista_de_entregas.DataBaseAcess
 
         public List<IEntregas> SelectByID()
         {
-            CriaConexao();
             try
             {
                 using (NpgsqlConnection npgsqlConnection = new NpgsqlConnection(ConectaString))
                 {
+                    CriaConexao();
                     pgsqlConnection.Open();
                     string cmdSelect = "Select * from Entregas order by IdCarga";
 
