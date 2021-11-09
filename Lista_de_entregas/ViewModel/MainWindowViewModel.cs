@@ -29,29 +29,23 @@ namespace Lista_de_entregas.ViewModel
             get { return _entregaSelecionada; }
             set { _entregaSelecionada = value; OnPropertyChanged("Entrega Selecionada"); }
         }
-        
+
+        public ICommand AdicionaComando { get; private set; }
+        public ICommand DeletarComando { get; private set; }
+        public ICommand AtualizaComando { get; private set; }
+
+
         public MainWindowViewModel()
         {
+            AdicionaComando = new RelayCommand((param) => { AddButton(); });
+            DeletarComando = new RelayCommand((param) => { DeleteButton(); });
+            AtualizaComando = new RelayCommand((param) => { EditButton(); });
 
             EntregasContexto = new PostgreSQL();
             Entregas = new ObservableCollection<IEntregas>(EntregasContexto.SelectByID());
-            
-
         }
         
        
-        //Botões e Comandos
-        
-        //Add commands
-        ICommand adicionar;
-        public ICommand AdicionaComando
-        {
-            get
-            {
-                return adicionar ?? (adicionar = new RelayCommand(x => { AddButton(); }));
-                
-            }
-        }
         private void AddButton()
         {
             Entregas entregas = new();
@@ -76,15 +70,6 @@ namespace Lista_de_entregas.ViewModel
             
         }
 
-        //Delete commands
-        public ICommand deletarcomando;
-        public ICommand DeletarComando
-        {
-            get
-            {
-                return deletarcomando ?? (deletarcomando = new RelayCommand(x => { DeleteButton(); }));
-            }
-        }   
         private void DeleteButton()
         {
             if( EntregaSelecionada != null)
@@ -96,15 +81,6 @@ namespace Lista_de_entregas.ViewModel
 
         }
 
-        //Update commands
-        ICommand atualizarcomando;
-        public ICommand AtualizaComando
-        {
-            get
-            {
-                return atualizarcomando ?? (atualizarcomando = new RelayCommand(x => { EditButton(); }));
-            }
-        }
 
         private void EditButton()
         {
