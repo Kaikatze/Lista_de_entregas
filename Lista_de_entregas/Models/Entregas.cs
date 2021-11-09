@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace Lista_de_entregas.Models
 {
-    public class Entregas : NofityPropertyChanged, ICloneable
+    public class Entregas : NofityPropertyChanged, ICloneable, IEntregas
     {
         private int _idCarga;
         public int IdCarga 
         { get 
             { return _idCarga; } 
             set 
-            { _idCarga = value; AvisaTela("IdCarga"); } 
+            { _idCarga = value; OnPropertyChanged("IdCarga"); } 
         
         }
 
@@ -24,7 +24,7 @@ namespace Lista_de_entregas.Models
         { get 
             { return _endereco; }
             set
-            { _endereco = value; AvisaTela("Endereco"); } 
+            { _endereco = value; OnPropertyChanged("Endereco"); } 
         }
 
         private string _cidade;
@@ -33,7 +33,7 @@ namespace Lista_de_entregas.Models
             get
             { return _cidade; }
             set
-            { _cidade = value; AvisaTela("Cidade"); }
+            { _cidade = value; OnPropertyChanged("Cidade"); }
         }
 
         private estados _estados;
@@ -41,7 +41,7 @@ namespace Lista_de_entregas.Models
         { get
             {return _estados; }
             set
-            { _estados = value; AvisaTela("Estados"); }
+            { _estados = value; OnPropertyChanged("Estados"); }
         }
 
         private double _frete;
@@ -50,7 +50,7 @@ namespace Lista_de_entregas.Models
             get 
             { return _frete; }
             set
-            { _frete = value; AvisaTela("Frete"); }
+            { _frete = value; OnPropertyChanged("Frete"); }
         }
 
         private double _peso;
@@ -58,7 +58,7 @@ namespace Lista_de_entregas.Models
         { get
             { return _peso; }
             set
-            { _peso = value; AvisaTela("Peso"); } 
+            { _peso = value; OnPropertyChanged("Peso"); } 
         }
 
         private DateTime _dataEntrega = DateTime.Now;
@@ -66,7 +66,7 @@ namespace Lista_de_entregas.Models
         {
             get
             { return _dataEntrega; }
-            set { _dataEntrega = value; AvisaTela("DataEntrega"); }
+            set { _dataEntrega = value; OnPropertyChanged("DataEntrega"); }
         }
 
         public object Clone()

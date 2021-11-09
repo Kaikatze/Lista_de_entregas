@@ -13,35 +13,31 @@ using System.Windows.Input;
 
 namespace Lista_de_entregas.DataBaseAcess
 {
-    public class PostgreSQL 
+    public class PostgreSQL : IEntregasContexto
     {
         static string serverName = "localhost";
         static string porta = "5432";
         static string username = "postgres";
         static string password = "$321";
         static string database = "entregacargas";
-        NpgsqlConnection pgsqlConnection;
-
         private string _conectaString = String.Format("Server={0};Port={1};User Id={2};Password={3};Database={4};",
                                                 serverName, porta, username, password, database);
+        NpgsqlConnection pgsqlConnection;
         public string ConectaString { get => _conectaString;  }
+        public IEntregas Entrega { get; set; }
+        public List<IEntregas> ListaEntregas { get; set; }
 
-        public PostgreSQL()
+        public PostgreSQL() { }
+
+        public PostgreSQL(IEntregas entrega)
         {
-            
+            Entrega = entrega;
         }
 
-
-        public int IdCarga { get; set; }
-        public string Endereco { get; set; }
-        public string Cidade { get; set; }
-        public estados Estados { get; set; }
-        public float Frete { get; set; }
-        public float Peso { get; set; }
-        public DateTime DataEntrega { get; set; }
         public DataSet DataSet { get; set; }
 
         public ObservableCollection<Entregas> Entregas { get; set; }
+        IEntregas IEntregasContexto.Entregas { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private void CriaConexao()
         {
@@ -52,7 +48,7 @@ namespace Lista_de_entregas.DataBaseAcess
         }
 
         
-        public void InsertData()
+        public void InsertData(IEntregas entregas)
         {
 
             try
@@ -62,8 +58,12 @@ namespace Lista_de_entregas.DataBaseAcess
                 {
                     pgsqlConnection.Open();
 
-                    string cmdInserir = String.Format("Insert Into Entregas(idcarga,endereco,cidade,estado,frete,toneladas,datacarga) values({0},'{1}','{2}','{3}',{4},{5},'{6}')", IdCarga.ToString(), Endereco,
-                                                                                                                                        Cidade, Estados.ToString(), Frete.ToString(), Peso.ToString(), DataEntrega.ToString());
+                    string cmdInserir = String.Format("Insert Into Entregas(idcarga,endereco,cidade,estado,frete,toneladas,datacarga)" +
+                        " values({0},'{1}','{2}','{3}',{4},{5},'{6}')",
+                          entregas.IdCarga.ToString(), entregas.Endereco,//Endereco & Cidade "String"
+                          entregas.Cidade, entregas.Estados.ToString(),
+                          entregas.Frete.ToString(), entregas.Peso.ToString(),
+                          entregas.DataEntrega.ToString());
 
                     using (NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdInserir, pgsqlConnection))
                     {
@@ -76,7 +76,7 @@ namespace Lista_de_entregas.DataBaseAcess
             }
             catch (Exception error)
             {
-                MessageBox.Show(error.ToString());
+                MessageBox.Show(error.Message);
             }
             finally
             {
@@ -84,8 +84,8 @@ namespace Lista_de_entregas.DataBaseAcess
             }
         }
 
-       
-        public void DeleteData()
+
+        public void DeleteData(IEntregas entregas)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace Lista_de_entregas.DataBaseAcess
                 using (pgsqlConnection)
                 {
                     pgsqlConnection.Open();
-                    string cmdDeletar = String.Format("delete from entregas where idcarga = '{0}'", IdCarga.ToString());
+                    string cmdDeletar = String.Format("delete from entregas where idcarga = '{0}'", entregas.IdCarga.ToString());
 
                     using (NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdDeletar, pgsqlConnection))
                     {
@@ -115,7 +115,7 @@ namespace Lista_de_entregas.DataBaseAcess
 
         }
 
-        public ObservableCollection<Entregas> SelectByID()
+        public List<IEntregas> SelectByID()
         {
             CriaConexao();
             try
@@ -131,14 +131,14 @@ namespace Lista_de_entregas.DataBaseAcess
                         adapter.Fill(DataSet, "Entregas");
                     }
 
-                    if( Entregas == null)
+                    if( ListaEntregas == null)
                     {
-                       Entregas = new ObservableCollection<Entregas>();
+                       ListaEntregas = new List<IEntregas>();
                     }
 
                     foreach (DataRow dataRow in DataSet.Tables[0].Rows)
                     {
-                        Entregas entregas = new Entregas();
+                        IEntregas entregas = new Entregas();
                         entregas.IdCarga = (int)dataRow[0];
                         entregas.Endereco = dataRow[1].ToString();
                         entregas.Cidade = dataRow[2].ToString();
@@ -147,7 +147,7 @@ namespace Lista_de_entregas.DataBaseAcess
                         entregas.Peso = (double)(decimal)dataRow[5];
                         entregas.DataEntrega = DateTime.Parse(dataRow[6].ToString());
 
-                        Entregas.Add(entregas);
+                        ListaEntregas.Add(entregas);
                     }
                 }
             }
@@ -162,10 +162,12 @@ namespace Lista_de_entregas.DataBaseAcess
                 DataSet = null;
             }
 
-            return Entregas;
+            return ListaEntregas;
         }
 
-
-
+        public void UpdateData(IEntregas entregas)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

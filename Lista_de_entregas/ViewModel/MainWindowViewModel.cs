@@ -20,21 +20,21 @@ namespace Lista_de_entregas.ViewModel
 
     {
 
-        public ObservableCollection<Entregas> Entregas { get; private set; }
-        public ObservableCollection<PostgreSQL> PostgresData { get; set; }
+        public ObservableCollection<IEntregas> Entregas { get;  set; }
+        public IEntregasContexto EntregasContexto { get; private set; }
 
         private Entregas _entregaSelecionada;
         public Entregas EntregaSelecionada
         {
             get { return _entregaSelecionada; }
-            set { _entregaSelecionada = value; AvisaTela("Entrega Selecionada"); }
+            set { _entregaSelecionada = value; OnPropertyChanged("Entrega Selecionada"); }
         }
         
         public MainWindowViewModel()
         {
-            
-            PostgreSQL postgreData = new PostgreSQL();
-            Entregas = new ObservableCollection<Entregas>(postgreData.SelectByID());
+
+            EntregasContexto = new PostgreSQL();
+            Entregas = new ObservableCollection<IEntregas>(EntregasContexto.SelectByID());
             
 
         }
@@ -68,7 +68,7 @@ namespace Lista_de_entregas.ViewModel
             
             if (registerDialog.DialogResult.HasValue && registerDialog.DialogResult.Value)
             {
-                Entregas.Add(entregas);
+                EntregasContexto.InsertData(entregas);
                 EntregaSelecionada = entregas;
             }
             
@@ -89,8 +89,9 @@ namespace Lista_de_entregas.ViewModel
         {
             if( EntregaSelecionada != null)
             {
+                EntregasContexto.DeleteData(EntregaSelecionada);
                 Entregas.Remove(EntregaSelecionada);
-                EntregaSelecionada = Entregas.FirstOrDefault();
+                EntregaSelecionada = (Entregas)Entregas.FirstOrDefault();
             }
 
         }
