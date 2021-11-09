@@ -22,9 +22,14 @@ namespace Lista_de_entregas.DataBaseAcess
         static string database = "entregacargas";
         NpgsqlConnection pgsqlConnection;
 
-        private string conexaoStr = String.Format("Server={0};Port={1};User Id={2};Password={3};Database={4};",
+        private string _conectaString = String.Format("Server={0};Port={1};User Id={2};Password={3};Database={4};",
                                                 serverName, porta, username, password, database);
-        public string ConectaString { get => conexaoStr;  }
+        public string ConectaString { get => _conectaString;  }
+
+        public PostgreSQL()
+        {
+            
+        }
 
 
         public int IdCarga { get; set; }
@@ -40,9 +45,9 @@ namespace Lista_de_entregas.DataBaseAcess
 
         private void CriaConexao()
         {
-            if (this.pgsqlConnection == null)
+            if (pgsqlConnection == null)
             {
-                this.pgsqlConnection = new NpgsqlConnection(ConectaString);
+                pgsqlConnection = new NpgsqlConnection(ConectaString);
             }
         }
 
@@ -50,39 +55,61 @@ namespace Lista_de_entregas.DataBaseAcess
         public void InsertData()
         {
 
-            //this.CriaCargaView();
-            this.CriaConexao();
-            using (this.pgsqlConnection)
+            try
             {
-                pgsqlConnection.Open();
-
-                string cmdInserir = String.Format("Insert Into Entregas(idcarga,endereco,cidade,estado,frete,toneladas,datacarga) values({0},'{1}','{2}','{3}',{4},{5},'{6}')", IdCarga.ToString(), Endereco,
-                                                                                                                                    Cidade, Estados.ToString(), Frete.ToString(), Peso.ToString(), DataEntrega.ToString());
-
-                using (NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdInserir, pgsqlConnection))
+                CriaConexao();
+                using (pgsqlConnection)
                 {
-                    pgsqlcommand.ExecuteNonQuery();
+                    pgsqlConnection.Open();
+
+                    string cmdInserir = String.Format("Insert Into Entregas(idcarga,endereco,cidade,estado,frete,toneladas,datacarga) values({0},'{1}','{2}','{3}',{4},{5},'{6}')", IdCarga.ToString(), Endereco,
+                                                                                                                                        Cidade, Estados.ToString(), Frete.ToString(), Peso.ToString(), DataEntrega.ToString());
+
+                    using (NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdInserir, pgsqlConnection))
+                    {
+                        pgsqlcommand.ExecuteNonQuery();
+                    }
+
+                    
+
                 }
-
+            }
+            catch (Exception error)
+            {
+                MessageBox.Show(error.ToString());
+            }
+            finally
+            {
                 pgsqlConnection.Close();
-
             }
         }
 
        
         public void DeleteData()
         {
-            this.CriaConexao();
-            using (this.pgsqlConnection)
+            try
             {
-                pgsqlConnection.Open();
-                string cmdDeletar = String.Format("delete from entregas where idcarga = '{0}'", IdCarga.ToString());
-
-                using (NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdDeletar, pgsqlConnection))
+                //CriaConexao();
+                using (pgsqlConnection)
                 {
-                    pgsqlcommand.ExecuteNonQuery();
-                }
+                    pgsqlConnection.Open();
+                    string cmdDeletar = String.Format("delete from entregas where idcarga = '{0}'", IdCarga.ToString());
 
+                    using (NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdDeletar, pgsqlConnection))
+                    {
+                        pgsqlcommand.ExecuteNonQuery();
+                    }
+
+                    
+                }
+            }
+            catch (Exception error)
+            {
+
+                MessageBox.Show(error.ToString());
+            }
+            finally
+            {
                 pgsqlConnection.Close();
             }
 
@@ -96,7 +123,7 @@ namespace Lista_de_entregas.DataBaseAcess
                 using (NpgsqlConnection npgsqlConnection = new NpgsqlConnection(ConectaString))
                 {
                     pgsqlConnection.Open();
-                    string cmdSelect = "Select * from Entregas";
+                    string cmdSelect = "Select * from Entregas order by IdCarga";
 
                     using (NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(cmdSelect, npgsqlConnection))
                     {

@@ -23,7 +23,7 @@ namespace Lista_de_entregas.ViewView
     {
         public MainWindow()
         {
-            DataContext = new EntregaViewModel();
+            DataContext = new MainWindowViewModel();
             InitializeComponent();
         }
     }

@@ -16,11 +16,12 @@ using System.Windows.Input;
 
 namespace Lista_de_entregas.ViewModel
 {
-    public class EntregaViewModel : NofityPropertyChanged
+    public class MainWindowViewModel : NofityPropertyChanged
 
     {
 
         public ObservableCollection<Entregas> Entregas { get; private set; }
+        public ObservableCollection<PostgreSQL> PostgresData { get; set; }
 
         private Entregas _entregaSelecionada;
         public Entregas EntregaSelecionada
@@ -29,12 +30,12 @@ namespace Lista_de_entregas.ViewModel
             set { _entregaSelecionada = value; AvisaTela("Entrega Selecionada"); }
         }
         
-        public EntregaViewModel()
+        public MainWindowViewModel()
         {
             
-            PostgreSQL postgre = new PostgreSQL();
-            Entregas = new ObservableCollection<Entregas>(postgre.SelectByID());
-
+            PostgreSQL postgreData = new PostgreSQL();
+            Entregas = new ObservableCollection<Entregas>(postgreData.SelectByID());
+            
 
         }
         
@@ -83,13 +84,13 @@ namespace Lista_de_entregas.ViewModel
             {
                 return deletarcomando ?? (deletarcomando = new RelayCommand(x => { DeleteButton(); }));
             }
-        }
+        }   
         private void DeleteButton()
         {
-            if(EntregaSelecionada != null)
+            if( EntregaSelecionada != null)
             {
                 Entregas.Remove(EntregaSelecionada);
-                EntregaSelecionada = (Entregas)Entregas.FirstOrDefault();
+                EntregaSelecionada = Entregas.FirstOrDefault();
             }
 
         }
