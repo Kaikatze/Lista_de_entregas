@@ -25,71 +25,25 @@ namespace Lista_de_entregas.DataBaseAcess
                                                                  serverName, porta, username, password, dataBase);
 
         private NpgsqlConnection pgsqlConnection;
-        private NpgsqlCommand pgsqlCommand;
-
         private List<IEntregas> ListaEntregas;
         private DataSet DataSet;
-       
+        
         public PostgreSQL() 
         {
             pgsqlConnection = new NpgsqlConnection(ConectaString);
-            pgsqlCommand = new NpgsqlCommand(cmdText:"Select * From Entregas order by IdCarga", pgsqlConnection);
-           
-            
+                   
         }
         
         private void CriaConexao()
         {
             if (pgsqlConnection == null)
             {
-                pgsqlConnection = new NpgsqlConnection(ConectaString);
-            }
-        }
-        
-        private NpgsqlCommand CriaComando(string comandoText, int comandoTimeOut)
-        {
-            NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = comandoText;
-            command.CommandTimeout = comandoTimeOut;
-            command.CommandType = CommandType.Text;
-            command.Connection = this.pgsqlConnection;
-
-
-            return command;
-        }
-
-        public void InsertData(IEntregas entregas)
-        {
-
-            try
-            {
-                CriaConexao();
-                pgsqlConnection.Open();
-                string cmdInserir = String.Format("Insert Into Entregas(idcarga,endereco,cidade,estado,frete,toneladas,datacarga)" +
-                        " values({0},'{1}','{2}','{3}',{4},{5},'{6}')",
-                          entregas.IdCarga.ToString(), entregas.Endereco,//Endereco & Cidade "String"
-                          entregas.Cidade, entregas.Estados.ToString(),
-                          entregas.Frete.ToString(), entregas.Peso.ToString(),
-                          entregas.DataEntrega.ToString());
-                
-                pgsqlCommand.ExecuteNonQuery();
-            }
-            catch (Exception error)
-            {
-                MessageBox.Show(error.Message);
-            }
-            finally
-            {
-                pgsqlConnection.Close();
+                pgsqlConnection;
             }
         }
 
-        public void DeleteData(IEntregas entregas)
-        {
-            string cmdDeletar = String.Format("delete from entregas where idcarga = '{0}'", entregas.IdCarga.ToString());
-            ExecutaCommando(cmdDeletar);
-        }
-        public void ExecutaCommando( string comandoText )
+
+        private void ExecutaCommando(string comandoText)
         {
             try
             {
@@ -111,6 +65,44 @@ namespace Lista_de_entregas.DataBaseAcess
 
         }
 
+        private NpgsqlCommand CriaComando(string comandoText, int comandoTimeOut)
+        {
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.CommandText = comandoText;
+            command.CommandTimeout = comandoTimeOut;
+            command.CommandType = CommandType.Text;
+            command.Connection = this.pgsqlConnection;
+
+
+            return command;
+        }
+
+        public void InsertData(IEntregas entregas)
+        {
+            string cmdInserir = String.Format("Insert Into Entregas(idcarga,endereco,cidade,estado,frete,toneladas,datacarga)" +
+                        " values({0},'{1}','{2}','{3}','{4}','{5}','{6}')",
+                          entregas.IdCarga.ToString(), entregas.Endereco,//Endereco & Cidade "String"
+                          entregas.Cidade, entregas.Estados.ToString(),
+                          entregas.Frete.ToString(), entregas.Peso.ToString(),
+                          entregas.DataEntrega.ToString());
+            ExecutaCommando(cmdInserir);
+        }
+
+        public void DeleteData(IEntregas entregas)
+        {
+            string cmdDeletar = String.Format("delete from entregas where idcarga = '{0}'", entregas.IdCarga.ToString());
+            ExecutaCommando(cmdDeletar);
+        }
+
+        //Funcionando errado - Atualiza todas as Rows da tabela.
+        public void UpdateData(IEntregas entregas)
+        {
+            string cmdAtualizar = String.Format("Update Entregas set Endereco = '{0}', Cidade = '{1}', Estado = '{2}', Frete = '{3}', Toneladas = '{4}', DataCarga = '{5}'",
+                                                entregas.Endereco, entregas.Cidade, entregas.Estados.ToString(), entregas.Frete.ToString(), entregas.Peso.ToString(),
+                                                entregas.DataEntrega.ToString());
+            ExecutaCommando(cmdAtualizar);
+        }
+
         public List<IEntregas> SelectByID()
         {
             try
@@ -127,9 +119,9 @@ namespace Lista_de_entregas.DataBaseAcess
                         DataSet = new DataSet();
                         adapter.Fill(DataSet, "Entregas");
                     }
-                    if ( ListaEntregas == null)
+                    if (ListaEntregas == null)
                     {
-                       ListaEntregas = new List<IEntregas>();
+                        ListaEntregas = new List<IEntregas>();
                     }
 
                     foreach (DataRow dataRow in DataSet.Tables[0].Rows)
@@ -159,13 +151,8 @@ namespace Lista_de_entregas.DataBaseAcess
             }
 
             return ListaEntregas;
+
+
         }
-
-        public void UpdateData(IEntregas entregas)
-        {
-            throw new NotImplementedException();
-        }
-
-
     }
 }

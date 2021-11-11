@@ -26,5 +26,6 @@ namespace Lista_de_entregas.ViewView
             DataContext = new MainWindowViewModel();
             InitializeComponent();
         }
+
     }
 }

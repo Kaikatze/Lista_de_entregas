@@ -14,6 +14,7 @@ namespace Lista_de_entregas.Models
         estados Estados { get; set; }
         double Frete { get; set; }
         double Peso { get; set; }
-        DateTime DataEntrega { get; set; }
+        DateTime DataEntrega { get; set; }   
+
     }
 }

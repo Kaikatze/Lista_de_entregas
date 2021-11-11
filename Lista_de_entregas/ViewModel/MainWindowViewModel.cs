@@ -84,24 +84,16 @@ namespace Lista_de_entregas.ViewModel
 
         private void EditButton()
         {
-            if (EntregaSelecionada != null)
-            {
-                Entregas clonaEntrega = (Entregas)EntregaSelecionada.Clone();
-                WinRegister updateDialog = new WinRegister();
-                updateDialog.DataContext = clonaEntrega;
-                updateDialog.ShowDialog();
+            
+            WinRegister updateDialog = new WinRegister();
+            updateDialog.DataContext = EntregaSelecionada;
+            updateDialog.ShowDialog();
 
-                if (updateDialog.DialogResult.HasValue && updateDialog.DialogResult.Value)
-                {
-                    ////EntregaSelecionada.IdCarga = clonaEntrega.IdCarga;
-                    ////EntregaSelecionada.Endereco = clonaEntrega.Endereco;
-                    //EntregaSelecionada.Cidade = clonaEntrega.Cidade;
-                    //EntregaSelecionada.Estados = clonaEntrega.Estados;
-                    //EntregaSelecionada.Frete = clonaEntrega.Frete;
-                    //EntregaSelecionada.Peso = clonaEntrega.Peso;
-                    ////EntregaSelecionada.DataEntrega = clonaEntrega.DataEntrega;
-                }
-            }
+              if (updateDialog.DialogResult.HasValue && updateDialog.DialogResult.Value)
+              {
+                EntregasContexto.UpdateData(EntregaSelecionada);
+              }
+            
         }
 
     }
