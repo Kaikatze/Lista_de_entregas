@@ -19,20 +19,25 @@ namespace Lista_de_entregas.DataBaseAcess
         private static string porta = "5432";
         private static string username = "postgres";
         private static string password = "$321";
-        private static string database = "entregacargas";
+        private static string dataBase = "entregacargas";
+        
         private string ConectaString = String.Format("Server={0};Port={1};User Id={2};Password={3};Database={4};",
-                                                serverName, porta, username, password, database);
+                                                                 serverName, porta, username, password, dataBase);
+
         private NpgsqlConnection pgsqlConnection;
-        private IEntregas Entrega; //<-
+        private NpgsqlCommand pgsqlCommand;
+
         private List<IEntregas> ListaEntregas;
         private DataSet DataSet;
-
-        private NpgsqlCommand pgsqlcommand;
+       
         public PostgreSQL() 
         {
-            pgsqlcommand = new NpgsqlCommand(cmdInserir, pgsqlConnection);
+            pgsqlConnection = new NpgsqlConnection(ConectaString);
+            pgsqlCommand = new NpgsqlCommand(cmdText:"Select * From Entregas order by IdCarga", pgsqlConnection);
+           
+            
         }
-
+        
         private void CriaConexao()
         {
             if (pgsqlConnection == null)
@@ -40,8 +45,19 @@ namespace Lista_de_entregas.DataBaseAcess
                 pgsqlConnection = new NpgsqlConnection(ConectaString);
             }
         }
-
         
+        private NpgsqlCommand CriaComando(string comandoText, int comandoTimeOut)
+        {
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.CommandText = comandoText;
+            command.CommandTimeout = comandoTimeOut;
+            command.CommandType = CommandType.Text;
+            command.Connection = this.pgsqlConnection;
+
+
+            return command;
+        }
+
         public void InsertData(IEntregas entregas)
         {
 
@@ -56,7 +72,7 @@ namespace Lista_de_entregas.DataBaseAcess
                           entregas.Frete.ToString(), entregas.Peso.ToString(),
                           entregas.DataEntrega.ToString());
                 
-                pgsqlcommand.ExecuteNonQuery();
+                pgsqlCommand.ExecuteNonQuery();
             }
             catch (Exception error)
             {
@@ -68,16 +84,19 @@ namespace Lista_de_entregas.DataBaseAcess
             }
         }
 
-
         public void DeleteData(IEntregas entregas)
+        {
+            string cmdDeletar = String.Format("delete from entregas where idcarga = '{0}'", entregas.IdCarga.ToString());
+            ExecutaCommando(cmdDeletar);
+        }
+        public void ExecutaCommando( string comandoText )
         {
             try
             {
                 CriaConexao();
                 pgsqlConnection.Open();
-                string cmdDeletar = String.Format("delete from entregas where idcarga = '{0}'", entregas.IdCarga.ToString());
-                NpgsqlCommand pgsqlcommand = new NpgsqlCommand(cmdDeletar, pgsqlConnection);
-                pgsqlcommand.ExecuteNonQuery();
+                NpgsqlCommand commando = CriaComando(comandoText, 15);
+                commando.ExecuteNonQuery();
 
             }
             catch (Exception error)
@@ -100,6 +119,7 @@ namespace Lista_de_entregas.DataBaseAcess
                 {
                     CriaConexao();
                     pgsqlConnection.Open();
+
                     string cmdSelect = "Select * from Entregas order by IdCarga";
 
                     using (NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(cmdSelect, npgsqlConnection))
@@ -107,8 +127,7 @@ namespace Lista_de_entregas.DataBaseAcess
                         DataSet = new DataSet();
                         adapter.Fill(DataSet, "Entregas");
                     }
-
-                    if( ListaEntregas == null)
+                    if ( ListaEntregas == null)
                     {
                        ListaEntregas = new List<IEntregas>();
                     }
@@ -146,5 +165,7 @@ namespace Lista_de_entregas.DataBaseAcess
         {
             throw new NotImplementedException();
         }
+
+
     }
 }
