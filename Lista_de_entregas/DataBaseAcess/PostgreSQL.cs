@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace Lista_de_entregas.DataBaseAcess
 {
-    public class PostgreSQL : IEntregasContexto
+    public class PostgreSQL : IEntregasContexto, IDisposable
     {
         private static string serverName = "localhost";
         private static string porta = "5432";
@@ -25,23 +25,28 @@ namespace Lista_de_entregas.DataBaseAcess
                                                                  serverName, porta, username, password, dataBase);
 
         private NpgsqlConnection pgsqlConnection;
+        private NpgsqlCommand comando;
+        private bool disposed;
+
         private List<IEntregas> ListaEntregas;
         private DataSet DataSet;
         
         public PostgreSQL() 
         {
             pgsqlConnection = new NpgsqlConnection(ConectaString);
-                   
+            comando = new NpgsqlCommand();
+            comando.Connection = pgsqlConnection;
+
+
         }
         
         private void CriaConexao()
         {
             if (pgsqlConnection == null)
             {
-                pgsqlConnection;
+                pgsqlConnection = new NpgsqlConnection();
             }
         }
-
 
         private void ExecutaCommando(string comandoText)
         {
@@ -49,7 +54,7 @@ namespace Lista_de_entregas.DataBaseAcess
             {
                 CriaConexao();
                 pgsqlConnection.Open();
-                NpgsqlCommand commando = CriaComando(comandoText, 15);
+                NpgsqlCommand commando = CriaComando(comandoText);
                 commando.ExecuteNonQuery();
 
             }
@@ -61,20 +66,19 @@ namespace Lista_de_entregas.DataBaseAcess
             finally
             {
                 pgsqlConnection.Close();
+
+
             }
 
         }
 
-        private NpgsqlCommand CriaComando(string comandoText, int comandoTimeOut)
+        private NpgsqlCommand CriaComando(string comandoText, int comandoTimeOut = 15)
         {
-            NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = comandoText;
-            command.CommandTimeout = comandoTimeOut;
-            command.CommandType = CommandType.Text;
-            command.Connection = this.pgsqlConnection;
-
-
-            return command;
+            comando.CommandText = comandoText;
+            comando.CommandTimeout = comandoTimeOut;
+            comando.CommandType = CommandType.Text;
+           
+            return comando;
         }
 
         public void InsertData(IEntregas entregas)
@@ -154,5 +158,26 @@ namespace Lista_de_entregas.DataBaseAcess
 
 
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                return;
+            }
+            if (disposing)
+            {
+                this.Dispose();
+            }
+
+            disposed = true;
+        }
+
     }
 }
