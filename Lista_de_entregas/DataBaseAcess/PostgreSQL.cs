@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace Lista_de_entregas.DataBaseAcess
 {
-    public class PostgreSQL : IEntregasContexto, IDisposable
+    public class PostgreSQL : IEntregasContexto
     {
         private static string serverName = "localhost";
         private static string porta = "5432";
@@ -26,17 +26,17 @@ namespace Lista_de_entregas.DataBaseAcess
 
         private NpgsqlConnection pgsqlConnection;
         private NpgsqlCommand comando;
-        private bool disposed;
-
         private List<IEntregas> ListaEntregas;
         private DataSet DataSet;
+        private NpgsqlDataReader DataReader;
         
-        public PostgreSQL() 
+        public PostgreSQL()  
         {
             pgsqlConnection = new NpgsqlConnection(ConectaString);
             comando = new NpgsqlCommand();
             comando.Connection = pgsqlConnection;
-
+            DataSet = new DataSet();
+            ListaEntregas = new List<IEntregas>();
 
         }
         
@@ -51,11 +51,11 @@ namespace Lista_de_entregas.DataBaseAcess
         private void ExecutaCommando(string comandoText)
         {
             try
-            {
+            {   
                 CriaConexao();
                 pgsqlConnection.Open();
-                NpgsqlCommand commando = CriaComando(comandoText);
-                commando.ExecuteNonQuery();
+                NpgsqlCommand comando = CriaComando(comandoText);
+                comando.ExecuteNonQuery();
 
             }
             catch (Exception error)
@@ -66,7 +66,11 @@ namespace Lista_de_entregas.DataBaseAcess
             finally
             {
                 pgsqlConnection.Close();
-
+                if (DataSet != null)
+                {
+                    DataSet = null;
+                }
+                
 
             }
 
@@ -107,77 +111,53 @@ namespace Lista_de_entregas.DataBaseAcess
             ExecutaCommando(cmdAtualizar);
         }
 
-        public List<IEntregas> SelectByID()
+        public List<IEntregas> SelectOrderByID()
         {
+
             try
             {
-                using (NpgsqlConnection npgsqlConnection = new NpgsqlConnection(ConectaString))
+                CriaConexao();
+                pgsqlConnection.Open();
+                comando.CommandText = "Select * from Entregas order by IdCarga";
+                comando.CommandTimeout = 15;
+                comando.Connection = comando.Connection;
+                comando.CommandType = CommandType.Text;
+
+                DataReader = comando.ExecuteReader();
+
+                if (DataReader.HasRows)
                 {
-                    CriaConexao();
-                    pgsqlConnection.Open();
-
-                    string cmdSelect = "Select * from Entregas order by IdCarga";
-
-                    using (NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(cmdSelect, npgsqlConnection))
-                    {
-                        DataSet = new DataSet();
-                        adapter.Fill(DataSet, "Entregas");
-                    }
-                    if (ListaEntregas == null)
-                    {
-                        ListaEntregas = new List<IEntregas>();
-                    }
-
-                    foreach (DataRow dataRow in DataSet.Tables[0].Rows)
+                    while (DataReader.Read())
                     {
                         IEntregas entregas = new Entregas();
-                        entregas.IdCarga = (int)dataRow[0];
-                        entregas.Endereco = dataRow[1].ToString();
-                        entregas.Cidade = dataRow[2].ToString();
-                        entregas.Estados = (estados)Enum.Parse(typeof(estados), dataRow[3].ToString(), true);
-                        entregas.Frete = (double)(decimal)dataRow[4];
-                        entregas.Peso = (double)(decimal)dataRow[5];
-                        entregas.DataEntrega = DateTime.Parse(dataRow[6].ToString());
+                        entregas.IdCarga = (int)DataReader[0];
+                        entregas.Endereco = DataReader[1].ToString();
+                        entregas.Cidade = DataReader[2].ToString();
+                        entregas.Estados = (estados)Enum.Parse(typeof(estados), DataReader[3].ToString(), true);
+                        entregas.Frete = (double)(decimal)DataReader[4];
+                        entregas.Peso = (double)(decimal)DataReader[5];
+                        entregas.DataEntrega = DateTime.Parse(DataReader[6].ToString());
 
                         ListaEntregas.Add(entregas);
                     }
+                    DataReader.Close();
                 }
-            }
-            catch (Exception error)
-            {
 
-                MessageBox.Show(error.Message);
+                return ListaEntregas;
             }
+            catch (NpgsqlException error)
+            {
+                MessageBox.Show(error.ToString());
+                return null;
+            }
+
             finally
             {
                 pgsqlConnection.Close();
-                DataSet = null;
             }
-
-            return ListaEntregas;
-
-
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-            {
-                return;
-            }
-            if (disposing)
-            {
-                this.Dispose();
-            }
-
-            disposed = true;
-        }
+      
 
     }
 }

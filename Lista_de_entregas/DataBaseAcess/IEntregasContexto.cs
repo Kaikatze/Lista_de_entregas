@@ -12,6 +12,6 @@ namespace Lista_de_entregas.DataBaseAcess
         void InsertData(IEntregas entregas);
         void DeleteData(IEntregas entregas);
         void UpdateData(IEntregas entregas);
-        List<IEntregas> SelectByID();
+        List<IEntregas> SelectOrderByID();
     }
 }

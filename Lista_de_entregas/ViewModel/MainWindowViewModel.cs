@@ -43,7 +43,7 @@ namespace Lista_de_entregas.ViewModel
 
             EntregasContexto = new PostgreSQL();
            
-            Entregas = new ObservableCollection<IEntregas>(EntregasContexto.SelectByID());
+            Entregas = new ObservableCollection<IEntregas>(EntregasContexto.SelectOrderByID());
         }
         
        
