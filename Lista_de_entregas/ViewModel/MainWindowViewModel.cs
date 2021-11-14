@@ -42,8 +42,8 @@ namespace Lista_de_entregas.ViewModel
             AtualizaComando = new RelayCommand((param) => { EditButton(); });
 
             EntregasContexto = new PostgreSQL();
-           
-            Entregas = new ObservableCollection<IEntregas>(EntregasContexto.SelectOrderByID());
+            EntregasContexto.SelectOrderByID();
+            Entregas = new ObservableCollection<IEntregas>(EntregasContexto.GetListaEntregas());
         }
         
        
