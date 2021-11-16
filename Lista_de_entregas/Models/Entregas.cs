@@ -61,6 +61,7 @@ namespace Lista_de_entregas.Models
             { _peso = value; OnPropertyChanged("Peso"); } 
         }
 
+        
         private DateTime _dataEntrega = DateTime.Now;
         public DateTime DataEntrega
         {

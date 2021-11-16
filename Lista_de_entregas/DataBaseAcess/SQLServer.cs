@@ -1,52 +1,44 @@
 ﻿using Lista_de_entregas.Models;
-using Lista_de_entregas.ViewModel;
-using Npgsql;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 
 namespace Lista_de_entregas.DataBaseAcess
 {
-    public class PostgreSQL : IEntregasContexto
+    class SQLServer : IEntregasContexto
     {
-        private static string serverName = "localhost";
-        private static string porta = "5432";
-        private static string username = "postgres";
+        private static string serverName = "VITORIA";
+        private static string userID = "sa";
         private static string password = "$321";
-        private static string dataBase = "entregacargas";
-        
-        private string ConectaString = String.Format("Server={0};Port={1};User Id={2};Password={3};Database={4};",
-                                                                 serverName, porta, username, password, dataBase);
+        private static string dataBase = "entregas";
 
-        private NpgsqlConnection pgsqlConnection;
-        private NpgsqlCommand comando;
+        private string ConectaString = String.Format("Server={0};User Id={1};Password={2};Database={3};",
+                                                                         serverName,  userID, password, dataBase);
+
+        private SqlConnection  sqlConnection;
+        private SqlCommand comando;
         private List<IEntregas> ListaEntregas;
-        
-        public PostgreSQL()  
+
+        public SQLServer()
         {
-            pgsqlConnection = new NpgsqlConnection(ConectaString);
-
-            comando = new NpgsqlCommand();
-            comando.Connection = pgsqlConnection;
+            sqlConnection = new SqlConnection(ConectaString);
+            comando = new SqlCommand();
+            comando.Connection = sqlConnection;
             ListaEntregas = new List<IEntregas>();
-
         }
-        
-
 
         private void ExecutaCommando()
         {
-            
+
             try
 
             {
-                pgsqlConnection.Open();
+                sqlConnection.Open();
                 this.comando.ExecuteNonQuery();
 
             }
@@ -57,9 +49,9 @@ namespace Lista_de_entregas.DataBaseAcess
             }
             finally
             {
-                pgsqlConnection.Close();
+                sqlConnection.Close();
             }
-            
+
 
         }
 
@@ -69,18 +61,18 @@ namespace Lista_de_entregas.DataBaseAcess
             this.comando.CommandText = comandoText;
             this.comando.CommandTimeout = comandoTimeOut;
             this.comando.CommandType = CommandType.Text;
-           
-            
+
+
         }
 
         public void InsertData(IEntregas entregas)
         {
-            string cmdInserir = String.Format("Insert Into Entregas(idcarga,endereco,cidade,estado,frete,toneladas,datacarga)" +
+            string cmdInserir = String.Format("Insert Into Entregas(IdCarga, Endereco, Cidade, Estados, Frete, Peso, DataEntrega)" +
                         " values({0},'{1}','{2}','{3}','{4}','{5}','{6}')",
-                          entregas.IdCarga.ToString(), entregas.Endereco,//Endereco & Cidade "String"
+                          entregas.IdCarga.ToString(), entregas.Endereco,
                           entregas.Cidade, entregas.Estados.ToString(),
                           entregas.Frete.ToString(), entregas.Peso.ToString(),
-                          entregas.DataEntrega.Date.ToString());
+                          entregas.DataEntrega.ToString());
             CriaComando(cmdInserir);
             ExecutaCommando();
         }
@@ -94,7 +86,7 @@ namespace Lista_de_entregas.DataBaseAcess
 
         public void UpdateData(IEntregas entregas)
         {
-            string cmdAtualizar = String.Format("Update Entregas set Endereco = '{0}', Cidade = '{1}', Estado = '{2}', Frete = '{3}', Toneladas = '{4}', DataCarga = '{5}' where IdCarga = '{6}'",
+            string cmdAtualizar = String.Format("Update Entregas set Endereco = '{0}', Cidade = '{1}', Estados = '{2}', Frete = '{3}', Peso = '{4}', DataEntrega = '{5}' where IdCarga = '{6}'",
                                                 entregas.Endereco, entregas.Cidade, entregas.Estados.ToString(), entregas.Frete.ToString(), entregas.Peso.ToString(),
                                                 entregas.DataEntrega.ToString(), entregas.IdCarga.ToString());
             CriaComando(cmdAtualizar);
@@ -106,14 +98,13 @@ namespace Lista_de_entregas.DataBaseAcess
 
             try
             {
-                pgsqlConnection.Open();
                 string select = "Select * from Entregas order by IdCarga";
+                sqlConnection.Open();
+                CriaComando(select);
+                SqlDataReader dataReader = this.comando.ExecuteReader();
 
-               CriaComando(select);
-                NpgsqlDataReader dataReader = this.comando.ExecuteReader();
 
-                
-                if (dataReader.HasRows)
+                if (dataReader.Read() == false)
 
                 {
 
@@ -127,18 +118,18 @@ namespace Lista_de_entregas.DataBaseAcess
                 }
 
             }
-            catch (NpgsqlException error)
+            catch (SqlException error)
             {
                 MessageBox.Show(error.ToString());
             }
             finally
             {
-                pgsqlConnection.Close();
+                sqlConnection.Close();
             }
 
         }
 
-        private IEntregas TratamentoDadosEntrega(NpgsqlDataReader dataReader )
+        private IEntregas TratamentoDadosEntrega(SqlDataReader dataReader)
         {
             IEntregas entregas = new Entregas();
             try
@@ -165,3 +156,4 @@ namespace Lista_de_entregas.DataBaseAcess
         }
     }
 }
+

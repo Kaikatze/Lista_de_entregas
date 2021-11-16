@@ -41,7 +41,7 @@ namespace Lista_de_entregas.ViewModel
             DeletarComando = new RelayCommand((param) => { DeleteButton(); });
             AtualizaComando = new RelayCommand((param) => { EditButton(); });
 
-            EntregasContexto = new PostgreSQL();
+            EntregasContexto = new SQLServer();
             EntregasContexto.SelectOrderByID();
             Entregas = new ObservableCollection<IEntregas>(EntregasContexto.GetListaEntregas());
         }
