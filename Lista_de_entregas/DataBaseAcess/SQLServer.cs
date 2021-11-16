@@ -104,7 +104,7 @@ namespace Lista_de_entregas.DataBaseAcess
                 SqlDataReader dataReader = this.comando.ExecuteReader();
 
 
-                if (dataReader.Read() == false)
+                if (dataReader.HasRows)
 
                 {
 

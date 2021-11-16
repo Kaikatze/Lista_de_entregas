@@ -62,7 +62,7 @@ namespace Lista_de_entregas.Models
         }
 
         
-        private DateTime _dataEntrega = DateTime.Now;
+        private DateTime _dataEntrega = DateTime.Today;
         public DateTime DataEntrega
         {
             get
