@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1000">
     <Grid>
-        <DataGrid  ItemsSource="{Binding Entregas}" SelectedItem="{Binding EntregaSelecionada}" Margin="260,27,10,10">
+        <DataGrid  ItemsSource="{Binding ListaDeEntregas}" SelectedItem="{Binding EntregaSelecionada}" Margin="260,27,10,10">
 
             
 

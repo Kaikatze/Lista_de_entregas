@@ -23,6 +23,7 @@ namespace Lista_de_entregas.DataBaseAcess
         private SqlConnection  sqlConnection;
         private SqlCommand comando;
         private List<IEntregas> ListaEntregas;
+        private SqlDataReader dataReader;
 
         public SQLServer()
         {
@@ -101,7 +102,8 @@ namespace Lista_de_entregas.DataBaseAcess
                 string select = "Select * from Entregas order by IdCarga";
                 sqlConnection.Open();
                 CriaComando(select);
-                SqlDataReader dataReader = this.comando.ExecuteReader();
+                
+                dataReader = this.comando.ExecuteReader();
 
 
                 if (dataReader.HasRows)
@@ -114,7 +116,7 @@ namespace Lista_de_entregas.DataBaseAcess
 
                         ListaEntregas.Add(entregas);
                     }
-                    dataReader.Close();
+
                 }
 
             }
@@ -125,6 +127,7 @@ namespace Lista_de_entregas.DataBaseAcess
             finally
             {
                 sqlConnection.Close();
+                dataReader.Close();
             }
 
         }
@@ -134,13 +137,13 @@ namespace Lista_de_entregas.DataBaseAcess
             IEntregas entregas = new Entregas();
             try
             {
-                entregas.IdCarga = (int)dataReader[0];
-                entregas.Endereco = dataReader[1].ToString();
-                entregas.Cidade = dataReader[2].ToString();
-                entregas.Estados = (estados)Enum.Parse(typeof(estados), dataReader[3].ToString(), true);
-                entregas.Frete = (double)(decimal)dataReader[4];
-                entregas.Peso = (double)(decimal)dataReader[5];
-                entregas.DataEntrega = DateTime.Parse(dataReader[6].ToString());
+                entregas.IdCarga = dataReader.GetInt32(0);
+                entregas.Endereco = dataReader.GetString(1);
+                entregas.Cidade = dataReader.GetString(2);
+                entregas.Estados = Enum.Parse<estados>(dataReader.GetString(3));
+                entregas.Frete = (double)dataReader.GetDecimal(4);
+                entregas.Peso = (double)dataReader.GetDecimal(5);
+                entregas.DataEntrega = dataReader.GetDateTime(6);
             }
             catch (Exception error)
             {

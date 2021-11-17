@@ -20,7 +20,7 @@ namespace Lista_de_entregas.ViewModel
 
     {
 
-        public ObservableCollection<IEntregas> Entregas { get;  set; }
+        public ObservableCollection<IEntregas> ListaDeEntregas { get;  set; }
         public IEntregasContexto EntregasContexto { get; private set; }
 
         private Entregas _entregaSelecionada;
@@ -41,19 +41,19 @@ namespace Lista_de_entregas.ViewModel
             DeletarComando = new RelayCommand((param) => { DeleteButton(); });
             AtualizaComando = new RelayCommand((param) => { EditButton(); });
 
-            EntregasContexto = new SQLServer();
+            EntregasContexto = new PostgreSQL();
             EntregasContexto.SelectOrderByID();
-            Entregas = new ObservableCollection<IEntregas>(EntregasContexto.GetListaEntregas());
+            ListaDeEntregas = new ObservableCollection<IEntregas>(EntregasContexto.GetListaEntregas());
         }
         
        
         private void AddButton()
         {
-            Entregas entregas = new();
+            Entregas entregas = new Entregas();
             int maxID = 0;
-            if (Entregas.Any())
+            if (ListaDeEntregas.Any())
             {
-                maxID = Entregas.Max(max => max.IdCarga);
+                maxID = ListaDeEntregas.Max(max => max.IdCarga);
             }
             entregas.IdCarga = maxID + 1;
             WinRegister registerDialog = new WinRegister();
@@ -65,6 +65,7 @@ namespace Lista_de_entregas.ViewModel
             {
                 EntregasContexto.InsertData(entregas);
                 EntregaSelecionada = entregas;
+                ListaDeEntregas.Add(entregas);
             }
             
 
@@ -76,8 +77,7 @@ namespace Lista_de_entregas.ViewModel
             if( EntregaSelecionada != null)
             {
                 EntregasContexto.DeleteData(EntregaSelecionada);
-                Entregas.Remove(EntregaSelecionada);
-                EntregaSelecionada = (Entregas)Entregas.FirstOrDefault();
+                ListaDeEntregas.Remove(EntregaSelecionada);
             }
 
         }
