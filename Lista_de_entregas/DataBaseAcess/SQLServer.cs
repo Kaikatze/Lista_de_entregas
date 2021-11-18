@@ -46,7 +46,7 @@ namespace Lista_de_entregas.DataBaseAcess
             catch (Exception error)
             {
 
-                MessageBox.Show(error.Message);
+                MessageBox.Show(error.Message, " A operação não foi realizada com êxito!");
             }
             finally
             {
@@ -73,7 +73,7 @@ namespace Lista_de_entregas.DataBaseAcess
                           entregas.IdCarga.ToString(), entregas.Endereco,
                           entregas.Cidade, entregas.Estados.ToString(),
                           entregas.Frete.ToString(), entregas.Peso.ToString(),
-                          entregas.DataEntrega.ToString());
+                          entregas.DataEntrega.Date.ToString("mm/dd/yyy"));
             CriaComando(cmdInserir);
             ExecutaCommando();
         }
@@ -122,7 +122,7 @@ namespace Lista_de_entregas.DataBaseAcess
             }
             catch (SqlException error)
             {
-                MessageBox.Show(error.ToString());
+                MessageBox.Show(error.ToString(), " Operação não realizada! ");
             }
             finally
             {
@@ -148,7 +148,7 @@ namespace Lista_de_entregas.DataBaseAcess
             catch (Exception error)
             {
 
-                MessageBox.Show(error.ToString());
+                MessageBox.Show(error.ToString(), " Operação não realizada");
             }
             return entregas;
         }

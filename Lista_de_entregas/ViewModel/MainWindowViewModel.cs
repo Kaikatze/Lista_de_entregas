@@ -1,4 +1,5 @@
 ﻿
+using FluentValidation.Results;
 using Lista_de_entregas.DataBaseAcess;
 using Lista_de_entregas.Models;
 using Lista_de_entregas.ViewView;
@@ -22,6 +23,11 @@ namespace Lista_de_entregas.ViewModel
 
         public ObservableCollection<IEntregas> ListaDeEntregas { get;  set; }
         public IEntregasContexto EntregasContexto { get; private set; }
+        private ValidaEntrega ValidaEntrega;
+
+        private Entregas _entregas;
+
+        private ValidationResult _validate;
 
         private Entregas _entregaSelecionada;
         public Entregas EntregaSelecionada
@@ -49,23 +55,37 @@ namespace Lista_de_entregas.ViewModel
        
         private void AddButton()
         {
-            Entregas entregas = new Entregas();
+            ValidaEntrega = new ValidaEntrega();
+            _entregas = new Entregas();
             int maxID = 0;
             if (ListaDeEntregas.Any())
             {
                 maxID = ListaDeEntregas.Max(max => max.IdCarga);
             }
-            entregas.IdCarga = maxID + 1;
+            _entregas.IdCarga = maxID + 1;
             WinRegister registerDialog = new WinRegister();
-            registerDialog.DataContext = entregas;
+            registerDialog.DataContext = _entregas;
             registerDialog.ShowDialog();
+            _validate = ValidaEntrega.Validate(_entregas);
             
             
             if (registerDialog.DialogResult.HasValue && registerDialog.DialogResult.Value)
             {
-                EntregasContexto.InsertData(entregas);
-                EntregaSelecionada = entregas;
-                ListaDeEntregas.Add(entregas);
+                
+                if (_validate.IsValid)
+                {
+                    EntregasContexto.InsertData(_entregas);
+                    EntregaSelecionada = _entregas;
+                    ListaDeEntregas.Add(_entregas);
+                }
+                else
+                {
+                    
+                    foreach (ValidationFailure failure in _validate.Errors)
+                    {
+                        MessageBox.Show(failure.ErrorMessage);
+                    }
+                }
             }
             
 
@@ -85,14 +105,25 @@ namespace Lista_de_entregas.ViewModel
 
         private void EditButton()
         {
-            
+            ValidaEntrega = new ValidaEntrega();
             WinRegister updateDialog = new WinRegister();
             updateDialog.DataContext = EntregaSelecionada;
             updateDialog.ShowDialog();
+            _validate = ValidaEntrega.Validate(_entregas);
 
               if (updateDialog.DialogResult.HasValue && updateDialog.DialogResult.Value)
               {
-                EntregasContexto.UpdateData(EntregaSelecionada);
+                if (_validate.IsValid)
+                {
+                    EntregasContexto.UpdateData(EntregaSelecionada);
+                }
+                else
+                {
+                    foreach (ValidationFailure failure in _validate.Errors)
+                    {
+                        MessageBox.Show(failure.ErrorMessage);
+                    }
+                }
               }
             
         }

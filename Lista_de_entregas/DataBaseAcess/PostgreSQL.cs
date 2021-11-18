@@ -77,7 +77,7 @@ namespace Lista_de_entregas.DataBaseAcess
         {
             string cmdInserir = String.Format("Insert Into Entregas(idcarga,endereco,cidade,estado,frete,toneladas,datacarga)" +
                         " values({0},'{1}','{2}','{3}','{4}','{5}','{6}')",
-                          entregas.IdCarga.ToString(), entregas.Endereco,//Endereco & Cidade "String"
+                          entregas.IdCarga.ToString(), entregas.Endereco,//Endereco & Cidade == String
                           entregas.Cidade, entregas.Estados.ToString(),
                           entregas.Frete.ToString(), entregas.Peso.ToString(),
                           entregas.DataEntrega.Date.ToString());
@@ -143,13 +143,13 @@ namespace Lista_de_entregas.DataBaseAcess
             IEntregas entregas = new Entregas();
             try
             {
-                entregas.IdCarga = (int)dataReader[0];
-                entregas.Endereco = dataReader[1].ToString();
-                entregas.Cidade = dataReader[2].ToString();
-                entregas.Estados = (estados)Enum.Parse(typeof(estados), dataReader[3].ToString(), true);
-                entregas.Frete = (double)(decimal)dataReader[4];
-                entregas.Peso = (double)(decimal)dataReader[5];
-                entregas.DataEntrega = DateTime.Parse(dataReader[6].ToString());
+                entregas.IdCarga = dataReader.GetInt32(0);
+                entregas.Endereco = dataReader.GetString(1);
+                entregas.Cidade = dataReader.GetString(2);
+                entregas.Estados = Enum.Parse<estados>(dataReader.GetString(3));
+                entregas.Frete = (double)dataReader.GetDecimal(4);
+                entregas.Peso = (double)dataReader.GetDecimal(5);
+                entregas.DataEntrega = dataReader.GetDateTime(6);
             }
             catch (Exception error)
             {
