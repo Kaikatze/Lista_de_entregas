@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lista_de_entregas.Models
 {
-    public class Entregas : NofityPropertyChanged, ICloneable, IEntregas
+    public class Entregas : NofityPropertyChanged, IEntregas
     {
         private int _idCarga;
         public int IdCarga 
@@ -62,7 +62,7 @@ namespace Lista_de_entregas.Models
         }
 
 
-        private DateTime _dataEntrega = DateTime.Today;
+        private DateTime _dataEntrega;
         public DateTime DataEntrega
         {
             get
@@ -70,9 +70,5 @@ namespace Lista_de_entregas.Models
             set { _dataEntrega = value; OnPropertyChanged("DataEntrega"); }
         }
 
-        public object Clone()
-        {
-            return this.MemberwiseClone();
-        }
     }
 }

@@ -23,7 +23,7 @@ namespace Lista_de_entregas.ViewModel
 
         public ObservableCollection<IEntregas> ListaDeEntregas { get;  set; }
         public IEntregasContexto EntregasContexto { get; private set; }
-        private ValidaEntrega ValidaEntrega;
+        private ValidaEntrega Validador { get;  set; }
 
         private Entregas _entregas;
 
@@ -50,41 +50,60 @@ namespace Lista_de_entregas.ViewModel
             EntregasContexto = new PostgreSQL();
             EntregasContexto.SelectOrderByID();
             ListaDeEntregas = new ObservableCollection<IEntregas>(EntregasContexto.GetListaEntregas());
+            Validador = new ValidaEntrega();
+
         }
-        
-       
-        private void AddButton()
+
+        public int IncrementaMaxId(int maxID = 0)
         {
-            ValidaEntrega = new ValidaEntrega();
-            _entregas = new Entregas();
-            int maxID = 0;
             if (ListaDeEntregas.Any())
             {
                 maxID = ListaDeEntregas.Max(max => max.IdCarga);
             }
-            _entregas.IdCarga = maxID + 1;
+            return maxID + 1;
+        }
+
+        private bool Confirmacao(Entregas entregas)
+        {
             WinRegister registerDialog = new WinRegister();
-            registerDialog.DataContext = _entregas;
+            registerDialog.DataContext = entregas;
             registerDialog.ShowDialog();
-            _validate = ValidaEntrega.Validate(_entregas);
-            
-            
-            if (registerDialog.DialogResult.HasValue && registerDialog.DialogResult.Value)
+            return (registerDialog.DialogResult.HasValue && registerDialog.DialogResult.Value);
+
+        }
+
+        public void AdcionaListaEntregas(Entregas entregas)
+        {
+            EntregasContexto.InsertData(entregas);
+            EntregaSelecionada = entregas;
+            ListaDeEntregas.Add(entregas);
+
+        }
+
+        private void GeraErroInput(ValidationResult validate)
+        {
+            foreach (ValidationFailure failure in validate.Errors)
             {
-                
+                MessageBox.Show(failure.ErrorMessage);
+            }
+        }
+        private void AddButton()
+        {
+            _entregas = new Entregas();
+
+            _entregas.IdCarga = IncrementaMaxId();
+            
+            
+            if (Confirmacao(_entregas))
+            {
+                _validate = Validador.Validate(_entregas);
                 if (_validate.IsValid)
                 {
-                    EntregasContexto.InsertData(_entregas);
-                    EntregaSelecionada = _entregas;
-                    ListaDeEntregas.Add(_entregas);
+                    AdcionaListaEntregas(_entregas);
                 }
                 else
                 {
-                    
-                    foreach (ValidationFailure failure in _validate.Errors)
-                    {
-                        MessageBox.Show(failure.ErrorMessage);
-                    }
+                    GeraErroInput(_validate);
                 }
             }
             
@@ -105,24 +124,18 @@ namespace Lista_de_entregas.ViewModel
 
         private void EditButton()
         {
-            ValidaEntrega = new ValidaEntrega();
-            WinRegister updateDialog = new WinRegister();
-            updateDialog.DataContext = EntregaSelecionada;
-            updateDialog.ShowDialog();
-            _validate = ValidaEntrega.Validate(_entregas);
 
-              if (updateDialog.DialogResult.HasValue && updateDialog.DialogResult.Value)
+              if (Confirmacao(EntregaSelecionada))
               {
+                _validate = Validador.Validate(_entregas);
+
                 if (_validate.IsValid)
                 {
                     EntregasContexto.UpdateData(EntregaSelecionada);
                 }
                 else
                 {
-                    foreach (ValidationFailure failure in _validate.Errors)
-                    {
-                        MessageBox.Show(failure.ErrorMessage);
-                    }
+                    GeraErroInput(_validate);
                 }
               }
             
