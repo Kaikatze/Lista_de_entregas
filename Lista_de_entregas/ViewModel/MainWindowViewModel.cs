@@ -54,8 +54,9 @@ namespace Lista_de_entregas.ViewModel
 
         }
 
-        public int IncrementaMaxId(int maxID = 0)
+        public int IncrementaMaxId()
         {
+            int maxID = 0;
             if (ListaDeEntregas.Any())
             {
                 maxID = ListaDeEntregas.Max(max => max.IdCarga);

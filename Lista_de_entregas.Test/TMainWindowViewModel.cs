@@ -14,7 +14,8 @@ namespace Lista_de_entregas.Test
     [TestFixture]
     class TMainWindowViewModel
     {
-        MainWindowViewModel sutVM = new MainWindowViewModel();
+        private MainWindowViewModel sutVM = new MainWindowViewModel();
+        
 
         [Test]
         public void TestaAdicionarEntregaNova()
@@ -28,12 +29,16 @@ namespace Lista_de_entregas.Test
         [Test]
         public void TestAutoIncrementoId()
         {
-            Entregas entregas = new Entregas() { IdCarga = 3 };
-            sutVM.ListaDeEntregas.Add(entregas);
+            Entregas entragaUm = new Entregas() { IdCarga = 10 };
 
-            sutVM.IncrementaMaxId();
+            Entregas entragaDois = new Entregas();
 
-            Assert.AreNotEqual(entregas.IdCarga = 3 , sutVM.ListaDeEntregas[0].IdCarga);
+            sutVM.ListaDeEntregas.Add(entragaUm);
+
+            entragaDois.IdCarga = sutVM.IncrementaMaxId();
+
+
+            Assert.That(entragaDois.IdCarga, Is.EqualTo(11));
         }
     }
 }
