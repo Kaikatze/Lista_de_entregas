@@ -26,6 +26,7 @@ namespace Lista_de_entregas.Test
 
             Assert.That(sutVM.ListaDeEntregas, Has.Member(entregas));
         }
+
         [Test]
         public void TestAutoIncrementoId()
         {
@@ -38,7 +39,7 @@ namespace Lista_de_entregas.Test
             entragaDois.IdCarga = sutVM.IncrementaMaxId();
 
 
-            Assert.That(entragaDois.IdCarga, Is.EqualTo(11));
+            Assert.AreEqual(entragaDois.IdCarga, 11);
         }
     }
 }

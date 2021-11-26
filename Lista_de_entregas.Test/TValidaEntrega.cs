@@ -19,10 +19,8 @@ namespace Lista_de_entregas.Test
         {
             Entregas entrega = new Entregas() { IdCarga = 1, Endereco = "Rua Alabama", Cidade = " ", Estados = estados.SP, Frete = 1, Peso = 1 };
             ValidationResult _validate = validaEntrega.Validate(entrega);
-            string resultado = _validate.ToString();
+            Assert.IsTrue(_validate.IsValid);
 
-
-            Assert.IsEmpty(resultado);
 
         }
         [Test]
