@@ -75,9 +75,22 @@ namespace Lista_de_entregas.ViewModel
 
         public void AdcionaListaEntregas(Entregas entregas)
         {
-            EntregasContexto.InsertData(entregas);
-            EntregaSelecionada = entregas;
-            ListaDeEntregas.Add(entregas);
+            try
+            {
+                EntregasContexto.InsertData(entregas);
+                EntregaSelecionada = entregas;
+                ListaDeEntregas.Add(entregas);
+            }
+            catch (Exception err)
+            {
+
+                MessageBox.Show("Falha ao salvar a nova informação", err.Message);
+            }
+            finally
+            {
+                
+            }
+            
 
         }
 

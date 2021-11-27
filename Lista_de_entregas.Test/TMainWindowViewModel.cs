@@ -1,6 +1,6 @@
-﻿using Lista_de_entregas.DataBaseAcess;
-using Lista_de_entregas.Models;
+﻿using Lista_de_entregas.Models;
 using Lista_de_entregas.ViewModel;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,15 +14,17 @@ namespace Lista_de_entregas.Test
     [TestFixture]
     class TMainWindowViewModel
     {
-        private MainWindowViewModel sutVM = new MainWindowViewModel();
+        private MainWindowViewModel sutVM;
+        private Mock<IEntregas> sutMock;
         
 
         [Test]
         public void TestaAdicionarEntregaNova()
         {
+            sutMock = new Mock<IEntregas>();
+
             string algumaData = "12/11/2021";
             Entregas entregas = new Entregas() {IdCarga = 1, Endereco = "Rua Alabama", Cidade = " ", Estados = estados.SP, Frete = 1000, Peso = 10, DataEntrega = Convert.ToDateTime(algumaData)};
-            sutVM.AdcionaListaEntregas(entregas);
 
             Assert.That(sutVM.ListaDeEntregas, Has.Member(entregas));
         }

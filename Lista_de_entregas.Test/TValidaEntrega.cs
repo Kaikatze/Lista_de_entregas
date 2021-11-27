@@ -1,9 +1,5 @@
-using FluentValidation;
-using FluentValidation.Results;
 using Lista_de_entregas.Models;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 
 
 namespace Lista_de_entregas.Test
@@ -12,25 +8,21 @@ namespace Lista_de_entregas.Test
     public class TValidaEntrega
     {
         
-        private ValidaEntrega validaEntrega = new ValidaEntrega();
+        private ValidaEntrega resultadoEntrega = new ValidaEntrega();
 
         [Test]
-        public void TestaVeirificaValidacaoDaEntregaFalha()
+        public void DeveRetornarFalseVeirificaValidacaoDaEntrega()
         {
-            Entregas entrega = new Entregas() { IdCarga = 1, Endereco = "Rua Alabama", Cidade = " ", Estados = estados.SP, Frete = 1, Peso = 1 };
-            ValidationResult _validate = validaEntrega.Validate(entrega);
-            Assert.IsTrue(_validate.IsValid);
+            Entregas entrega = new Entregas() { IdCarga = -1, Endereco = "Rua Alabama", Cidade = "", Estados = estados.SP, Frete = 10, Peso = 1 };
+            Assert.IsFalse(resultadoEntrega.IsValid(entrega), "Retorno tem que ser falso");
 
 
         }
         [Test]
-        public void TestaVeirificaValidacaoDaEntregaValido()
+        public void DeveRetornarTrueVeirificaValidacaoDaEntrega()
         {
-            IEntregas entrega = new Entregas() { IdCarga = 3, Endereco = "Rua Augusta", Cidade = "Alguma Cidade", Estados = estados.SP, Frete = 1, Peso = 1 };
-            ValidationResult _validate = validaEntrega.Validate(entrega);
-            string resultado = _validate.ToString();
-
-            Assert.IsEmpty(resultado);
+            Entregas entrega = new Entregas() { IdCarga = 3, Endereco = "Rua Augusta", Cidade = "Alguma Cidade", Estados = estados.SP, Frete = 10, Peso = 1 };
+            Assert.IsTrue(resultadoEntrega.IsValid(entrega), "Retorno tem que ser verdadeiro");
 
         }
 

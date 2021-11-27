@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Lista_de_entregas.Models
 {
-    public class ValidaEntrega : AbstractValidator<IEntregas>
+    public class ValidaEntrega : AbstractValidator<IEntregas>, InterfaceValidaEntrega
     {
         public ValidaEntrega()
         {
             RuleFor(x => x.IdCarga)
-                .NotEqual(0);
+                .GreaterThan(0);
 
 
             RuleFor(x => x.Endereco)
@@ -26,20 +27,26 @@ namespace Lista_de_entregas.Models
 
 
             RuleFor(x => x.Frete)
-                .NotEqual(0);
+                .GreaterThan(10);
 
             RuleFor(x => x.Peso)
                 .NotEqual(0);
 
-            RuleFor(x => x.DataEntrega)
-                .NotEmpty();
-
+            //RuleFor(x => x.DataEntrega)
+            //    .NotEmpty();
         }
 
-        //public void ValidaId(Entregas )
-        //{
-        //    RuleFor(x => x.IdCarga)
-        //        .NotEqual(0);
-        //}
+        public bool IsValid(IEntregas entrega)
+        {
+            ValidationResult result = Validate(entrega);
+            if (result.IsValid)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
